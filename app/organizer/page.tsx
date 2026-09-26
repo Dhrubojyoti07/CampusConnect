@@ -57,12 +57,43 @@ export default function OrganizerPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
+  if (!currentUser) {
+    return (
+      <section className="shell" style={{ padding: '56px 0' }}>
+        <EmptyState
+          title="Organizer sign-in required"
+          description="Please sign in with an organizer account to access the organizer console and manage events."
+          action={
+            <Link
+              href="/login?redirect=/organizer"
+              target="_self"
+              className="btn btn-primary"
+              style={{ marginTop: 8 }}
+            >
+              Sign In as Organizer
+            </Link>
+          }
+        />
+      </section>
+    )
+  }
+
   if (currentUser.role !== 'organizer') {
     return (
       <section className="shell" style={{ padding: '56px 0' }}>
         <EmptyState
-          title="This page is for organizers"
-          description="Switch to an organizer account from the top-right menu to manage events."
+          title="Organizer access only"
+          description={`You are currently signed in as a student (${currentUser.name}). The organizer console is restricted to campus organizers.`}
+          action={
+            <Link
+              href="/login?redirect=/organizer"
+              target="_self"
+              className="btn btn-secondary"
+              style={{ marginTop: 8 }}
+            >
+              Switch to Organizer Account
+            </Link>
+          }
         />
       </section>
     )

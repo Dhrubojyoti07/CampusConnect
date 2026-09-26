@@ -39,8 +39,9 @@ export default function EventRegistration({
   const { currentUser } = useAuth()
   const [event, setEvent] = useState<CampusEvent>(initialEvent)
 
+  const isStudent = currentUser?.role === 'student'
   const [registered, setRegistered] = useState(() =>
-    currentUser?.role === 'student' && initialEvent
+    isStudent && currentUser && initialEvent
       ? isStudentRegisteredForEvent(currentUser.id, initialEvent.id)
       : false,
   )
@@ -51,11 +52,16 @@ export default function EventRegistration({
   const full = isFullEvent(event)
   const status = getEventRegistrationStatus(event)
 
-  const isStudent = currentUser.role === 'student'
-  const alreadyRegistered = registered || (isStudent && isStudentRegisteredForEvent(currentUser.id, event.id))
-  const canRegister = !past && !full && !event.cancelled && isStudent && !alreadyRegistered
+  const alreadyRegistered =
+    registered || (isStudent && currentUser ? isStudentRegisteredForEvent(currentUser.id, event.id) : false)
+  const canRegister = Boolean(currentUser) && !past && !full && !event.cancelled && isStudent && !alreadyRegistered
 
   const handleRegister = async () => {
+    if (!currentUser) {
+      setFeedback({ type: 'error', text: 'You must be logged in to register.' })
+      return
+    }
+
     if (!isStudent) {
       setFeedback({ type: 'error', text: 'You must be logged in as a student to register.' })
       return
@@ -100,7 +106,9 @@ export default function EventRegistration({
   }
 
   let buttonText = 'Register'
-  if (!isStudent) {
+  if (!currentUser) {
+    buttonText = 'Sign in to register'
+  } else if (!isStudent) {
     buttonText = 'Registration only for students'
   } else if (alreadyRegistered) {
     buttonText = '✓ Registered'
@@ -195,34 +203,89 @@ export default function EventRegistration({
             </div>
           )}
 
-          <button
-            className="btn btn-primary"
-            disabled={!canRegister || loading}
-            onClick={handleRegister}
-            style={{ marginTop: 4 }}
-          >
-            {loading ? 'Registering…' : buttonText}
-          </button>
-
-          {alreadyRegistered && (
-            <Link
-              href="/registrations"
-              target="_self"
+          {!currentUser ? (
+            <div
               style={{
-                fontSize: 13,
-                textAlign: 'center',
-                color: 'var(--ink-soft)',
-                textDecoration: 'underline',
+                padding: '16px',
+                borderRadius: 'var(--radius)',
+                background: 'rgba(217, 119, 6, 0.07)',
+                border: '1.5px solid var(--amber)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
+                marginTop: 6,
               }}
             >
-              View in My Registrations →
-            </Link>
-          )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 16 }}>🔒</span>
+                <span style={{ fontWeight: 600, fontSize: 13.5 }}>Sign in required to register</span>
+              </div>
+              <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', margin: 0, lineHeight: 1.4 }}>
+                Please log in with a student account to reserve seats for this event.
+              </p>
+              <div style={{ display: 'flex', gap: 8, marginTop: 2 }}>
+                <Link
+                  href={`/login?redirect=/events/${event.id}`}
+                  target="_self"
+                  className="btn btn-primary"
+                  style={{
+                    padding: '8px 12px',
+                    fontSize: 12.5,
+                    flex: 1,
+                    textAlign: 'center',
+                    fontWeight: 600,
+                  }}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/signup"
+                  target="_self"
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '8px 12px',
+                    fontSize: 12.5,
+                    flex: 1,
+                    textAlign: 'center',
+                    fontWeight: 600,
+                  }}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <button
+                className="btn btn-primary"
+                disabled={!canRegister || loading}
+                onClick={handleRegister}
+                style={{ marginTop: 4 }}
+              >
+                {loading ? 'Registering…' : buttonText}
+              </button>
 
-          {!isStudent && (
-            <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', margin: 0 }}>
-              Currently logged in as organizer ({currentUser.name}). Switch account from top-right to register.
-            </p>
+              {alreadyRegistered && (
+                <Link
+                  href="/registrations"
+                  target="_self"
+                  style={{
+                    fontSize: 13,
+                    textAlign: 'center',
+                    color: 'var(--ink-soft)',
+                    textDecoration: 'underline',
+                  }}
+                >
+                  View in My Registrations →
+                </Link>
+              )}
+
+              {!isStudent && (
+                <p style={{ fontSize: 12.5, color: 'var(--ink-soft)', margin: 0 }}>
+                  Currently logged in as organizer ({currentUser.name}). Switch or log in with a student account to register.
+                </p>
+              )}
+            </>
           )}
         </aside>
       </div>

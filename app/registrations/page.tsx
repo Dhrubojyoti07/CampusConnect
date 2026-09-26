@@ -30,15 +30,48 @@ export default function RegistrationsPage() {
           }
         })
         .catch(() => {})
+    } else {
+      setRegistrationsList([])
     }
   }, [currentUser?.id, currentUser?.role])
+
+  if (!currentUser) {
+    return (
+      <section className="shell" style={{ padding: '56px 0' }}>
+        <EmptyState
+          title="Sign in required"
+          description="Please log in with your student account to view and manage your event registrations."
+          action={
+            <Link
+              href="/login?redirect=/registrations"
+              target="_self"
+              className="btn btn-primary"
+              style={{ marginTop: 8 }}
+            >
+              Sign In
+            </Link>
+          }
+        />
+      </section>
+    )
+  }
 
   if (currentUser.role !== 'student') {
     return (
       <section className="shell" style={{ padding: '56px 0' }}>
         <EmptyState
           title="This page is for students"
-          description="Switch to a student account from the top-right menu to see registered events."
+          description={`You are currently logged in as an organizer (${currentUser.name}). Switch or log in with a student account to see registered events.`}
+          action={
+            <Link
+              href="/login?redirect=/registrations"
+              target="_self"
+              className="btn btn-secondary"
+              style={{ marginTop: 8 }}
+            >
+              Log In as Student
+            </Link>
+          }
         />
       </section>
     )

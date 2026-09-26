@@ -13,7 +13,7 @@ const LINKS = [
 
 export default function Navbar() {
   const pathname = usePathname()
-  const { currentUser, setCurrentUserId, allUsers } = useAuth()
+  const { currentUser, logout } = useAuth()
 
   return (
     <header
@@ -70,7 +70,7 @@ export default function Navbar() {
           <ul style={{ display: 'flex', gap: 4 }}>
             {LINKS.filter(
               (link) =>
-                link.href !== '/organizer' || currentUser.role === 'organizer',
+                link.href !== '/organizer' || currentUser?.role === 'organizer',
             ).map((link) => {
               const active =
                 link.href === '/'
@@ -100,38 +100,69 @@ export default function Navbar() {
           </ul>
         </nav>
 
-        <label
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            fontSize: 13,
-            color: 'var(--ink-soft)',
-          }}
-        >
-          <span className="eyebrow-tag" style={{ whiteSpace: 'nowrap' }}>
-            {currentUser.role}
-          </span>
-          <select
-            aria-label="Switch current user"
-            value={currentUser.id}
-            onChange={(e) => setCurrentUserId(e.target.value)}
-            style={{
-              border: '1.5px solid var(--line)',
-              borderRadius: 'var(--radius)',
-              padding: '6px 8px',
-              fontSize: 13.5,
-              background: 'var(--paper-raised)',
-              color: 'var(--ink)',
-            }}
-          >
-            {allUsers.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {currentUser ? (
+            <>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  fontSize: 13,
+                }}
+              >
+                <span className="eyebrow-tag" style={{ textTransform: 'capitalize' }}>
+                  {currentUser.role === 'student' ? '🎓 Student' : '🏛️ Organizer'}
+                </span>
+                <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--ink)' }}>
+                  {currentUser.name}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={logout}
+                className="btn btn-secondary"
+                style={{
+                  padding: '6px 12px',
+                  fontSize: 13,
+                  fontWeight: 500,
+                }}
+              >
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                target="_self"
+                className="btn btn-secondary"
+                style={{
+                  padding: '6px 14px',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  background: pathname === '/login' ? 'var(--slate-bg)' : undefined,
+                }}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/signup"
+                target="_self"
+                className="btn btn-primary"
+                style={{
+                  padding: '6px 14px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </header>
   )

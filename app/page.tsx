@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { events, isPastEvent } from '@/data/events'
 import EventCard from '@/components/EventCard'
+import AuthLandingPortal from '@/components/AuthLandingPortal'
 
 export default function HomePage() {
   const upcoming = events
@@ -13,52 +14,57 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="shell" style={{ padding: '56px 0 40px' }}>
+      <section className="shell" style={{ padding: '48px 0 40px' }}>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1.1fr 0.9fr',
+            gridTemplateColumns: '1.1fr 1fr',
             gap: 40,
-            alignItems: 'end',
+            alignItems: 'start',
           }}
           className="hero-grid"
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <span className="eyebrow-tag">what's posted this week</span>
-            <h1 style={{ fontSize: 'clamp(32px, 4vw, 48px)' }}>
-              Every club, match, and workshop on campus — in one place.
-            </h1>
-            <p style={{ fontSize: 16.5 }}>
-              Campus Connect is where student organizations post their events
-              and where you register for them. No more scattered WhatsApp
-              forwards or half-updated noticeboards.
-            </p>
-            <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div>
+              <span className="eyebrow-tag">campus portal & events</span>
+              <h1 style={{ fontSize: 'clamp(32px, 3.8vw, 46px)', marginTop: 10 }}>
+                Every club, match, and workshop on campus — in one place.
+              </h1>
+              <p style={{ fontSize: 16.5, marginTop: 12 }}>
+                Campus Connect is where student organizations post their events
+                and where you register for them. Sign in or create a student / organizer
+                account to get started.
+              </p>
+            </div>
+
+            <div
+              className="card-surface"
+              style={{
+                padding: 20,
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 16,
+              }}
+            >
+              <Stat label="Upcoming events" value={String(upcomingCount)} />
+              <Stat label="Campus venues" value={String(venueCount)} />
+              <Stat label="Categories" value="6" />
+              <Stat
+                label="Total seats posted"
+                value={String(events.reduce((s, e) => s + e.capacity, 0))}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: 12 }}>
               <Link href="/events" target="_self" className="btn btn-primary">
-                Browse events
-              </Link>
-              <Link href="/organizer" target="_self" className="btn btn-secondary">
-                Post an event
+                Browse events board →
               </Link>
             </div>
           </div>
 
-          <div
-            className="card-surface"
-            style={{
-              padding: 24,
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 20,
-            }}
-          >
-            <Stat label="Upcoming events" value={String(upcomingCount)} />
-            <Stat label="Campus venues" value={String(venueCount)} />
-            <Stat label="Categories" value="6" />
-            <Stat
-              label="Total seats posted"
-              value={String(events.reduce((s, e) => s + e.capacity, 0))}
-            />
+          {/* Authentication & Signup Landing Portal */}
+          <div>
+            <AuthLandingPortal />
           </div>
         </div>
       </section>
