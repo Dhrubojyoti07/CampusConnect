@@ -22,7 +22,7 @@ export default function EventCard({ event }: { event: CampusEvent }) {
         : 'open'
 
   return (
-    <Link href={`/events/${event.id}`} className="event-card">
+    <Link href={`/events/${event.id}`} target="_self" className="event-card">
       <div className="event-card__main">
         <span className="event-card__category">{event.category}</span>
         <h3 className="event-card__name">{event.name}</h3>

@@ -34,10 +34,10 @@ export default function HomePage() {
               forwards or half-updated noticeboards.
             </p>
             <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-              <Link href="/events" className="btn btn-primary">
+              <Link href="/events" target="_self" className="btn btn-primary">
                 Browse events
               </Link>
-              <Link href="/organizer" className="btn btn-secondary">
+              <Link href="/organizer" target="_self" className="btn btn-secondary">
                 Post an event
               </Link>
             </div>
@@ -75,6 +75,7 @@ export default function HomePage() {
           <h2 style={{ fontSize: 22 }}>Coming up soon</h2>
           <Link
             href="/events"
+            target="_self"
             style={{ fontSize: 14, fontWeight: 600, textDecoration: 'none' }}
           >
             See full listing →

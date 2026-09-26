@@ -16,6 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <base target="_self" />
+      </head>
       <body>
         <AuthProvider>
           <Navbar />

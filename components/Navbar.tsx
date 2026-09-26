@@ -37,6 +37,7 @@ export default function Navbar() {
       >
         <Link
           href="/"
+          target="_self"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -79,6 +80,7 @@ export default function Navbar() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
+                    target="_self"
                     style={{
                       display: 'inline-block',
                       padding: '8px 12px',
